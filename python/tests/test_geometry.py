@@ -1,5 +1,5 @@
 import pytest
-from python.bearing.geometry import Bearing, fault_frequencies
+from geometry import Bearing, fault_frequencies
 
 # Using the CWRU 6205 bearing parameters
 # This is the drive-end bearing used in the Case Western Reserve University fault-signature dataset.
