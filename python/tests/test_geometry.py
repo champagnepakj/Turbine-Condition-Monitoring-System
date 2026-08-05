@@ -42,3 +42,40 @@ def test_BPFO():
 
     assert freqs.BPFO + freqs.BPFI == pytest.approx(id_one)
     assert freqs.BPFO == pytest.approx(id_two)
+
+
+
+'''
+def detection(final_signal, fft_signal, freqs, loop_length):
+    harmonic = freqs * shaft_speed
+    scan_peak = signal.find_peaks(fft_signal, prominence=2)
+
+    for i in range(1, loop_length, 1):
+        target_freq = harmonic * i
+        print(f"target {target_freq}")
+        idx = np.argmin(np.abs(final_signal-target_freq))
+        scanned_magnitude = fft_signal[idx]
+        print(f"mag + {scanned_magnitude}")
+        err_message = f"Anomally detected at frequency {target_freq}Hz, of magnitude {scanned_magnitude}"
+
+        
+        window_size = 40 # use 20 for them but needs logic to move dynamically, breaks for FTF
+        guard_bins = 8 # 2
+        left_noise = fft_signal[idx - window_size : idx - guard_bins]
+        right_noise = fft_signal[idx + guard_bins + 1 : idx + window_size + 1]
+        local_noise = np.concatenate([left_noise, right_noise])
+
+        local_mean = np.mean(local_noise)
+        print(f"mean {local_mean}")
+        local_std = np.std(local_noise)
+        print(f"std {local_std}")
+        threshold = local_mean + 2 * local_std
+        print(f"threshold + {threshold}")
+        
+
+        if scanned_magnitude > threshold:
+            print(err_message)
+        else:
+            print("None")
+
+'''
