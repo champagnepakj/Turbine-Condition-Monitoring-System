@@ -32,10 +32,10 @@ def test_BPFO():
     #assert freqs.FTF == pytest.approx(0.4041, rel=1e-3)
     #assert freqs.BSF == pytest.approx(2.5102, rel=1e-3)
 
-    assert freqs.BPFO == pytest.approx(3.5848, rel=1e-3)
+    assert freqs.BPFO == pytest.approx(3.5848, rel=1e-3) # rel = 0.001
     assert freqs.BPFI == pytest.approx(5.4152, rel=1e-3)
-    assert freqs.FTF == pytest.approx(0.3983, rel=1e-3)
-    assert freqs.BSF == pytest.approx(2.3568, rel=1e-3)
+    assert freqs.FTF  == pytest.approx(0.3983, rel=1e-3)
+    assert freqs.BSF  == pytest.approx(2.3568, rel=1e-3)
 
     id_one = cwru_bearing.n_elements * 1.0
     id_two = cwru_bearing.n_elements * freqs.FTF
