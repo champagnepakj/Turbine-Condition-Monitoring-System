@@ -7,7 +7,7 @@ from scipy.fft import fftfreq, fft
 import math
 from detector import detection
 from analysis import envelope_analysis
-from config import decay, fImpact, shaft_speed, duration_seconds
+from config import decay, fImpact, duration_seconds
 
 
 

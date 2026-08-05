@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 #from main import plain_noise, test_filt, test_env, test_freq, test_mag
-from config import shaft_speed
 
 
 def visualise_time_domain_envelope_plot(signal, filtered_signal, envelope):
@@ -22,7 +21,7 @@ def visualise_envelope_frequency_spectrum(frequency, magnitude, fault_type):
 
     for i in range (1, 10):
         #plt.axvline(x=107.5 * i, color='black', linestyle='--')
-        plt.axvline(x=fault_type * shaft_speed * i, color='black', linestyle='--')
+        plt.axvline(x=fault_type * 29.95 * i, color='black', linestyle='--')
 
     plt.show()
 
