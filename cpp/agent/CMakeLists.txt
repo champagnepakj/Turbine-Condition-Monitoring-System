@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.20)
+project(turbine_agent)
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(agent src/main.cpp src/signal_generator.cpp)
+target_include_directories(agent PRIVATE include)
