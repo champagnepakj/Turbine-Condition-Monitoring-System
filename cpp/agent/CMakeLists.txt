@@ -3,5 +3,5 @@ project(turbine_agent)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(agent src/main.cpp src/signal_generator.cpp)
+add_executable(agent src/main.cpp src/signal_generator.cpp src/bearing_geometry.cpp)
 target_include_directories(agent PRIVATE include)
