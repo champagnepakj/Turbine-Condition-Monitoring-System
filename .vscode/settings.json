@@ -1,3 +1,7 @@
 {
-    "python.analysis.extraPaths": ["python/bearing"]
+    "python.analysis.extraPaths": ["python/bearing"],
+    "C_Cpp.default.includePath": [
+    "Z:/vcpkg/installed/x64-windows/include",
+    "${workspaceFolder}/cpp/agent/include"
+]
 }

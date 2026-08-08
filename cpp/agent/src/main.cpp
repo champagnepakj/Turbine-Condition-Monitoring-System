@@ -2,6 +2,11 @@
 #include <vector>
 #include "signal_generator.h"
 #include "bearing.geometry.h"
+#include <librdkafka/rdkafkacpp.h>
+#include "kafka_producer.h"
+
+
+
 
 int main() 
 {
@@ -14,7 +19,15 @@ int main()
     std::cout << "FTF: " << frequencies.FTF << std::endl;
     std::cout << "BSF: " << frequencies.BSF << std::endl;
 
+    std::vector<double> impulse = generateImpulseTrain(frequencies.BPFO, 29.95, 20000, 0.2, 1.0);
 
+    std::string topic = "features";
+
+    RdKafka::Producer *producer = initProducer("localhost:9092");
+    publishMessage(producer, topic, impulse);
+
+    producer->flush(10000);
+    delete producer;
     /*
     std::vector<double> x = generateImpulseTrain(3.584, 29.95, 20000, 0.2, 1.0);
 
@@ -24,3 +37,4 @@ int main()
     }
     */
 }
+
