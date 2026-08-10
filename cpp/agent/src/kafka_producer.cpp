@@ -51,22 +51,21 @@ RdKafka::Producer* initProducer(std::string brokers) {
         std::cerr << "Failed to create a producer: " << errstr << std::endl;
         exit(1);
     }
-    // delete conf
+
     delete conf;
 
-    // return producer
     return producer;
 }
 
 
-bool publishMessage(RdKafka::Producer *producer, std::string topic, const std::vector<double>& signal) {
+bool publishMessage(RdKafka::Producer *producer, std::string topic, const std::vector<double>& signal, const std::string& key) {
     
     RdKafka::ErrorCode err = producer->produce(
         topic,
         RdKafka::Topic::PARTITION_UA,
         RdKafka::Producer::RK_MSG_COPY,
         const_cast<char*>(reinterpret_cast<const char*>(signal.data())), signal.size() * sizeof(double),
-        NULL, 0,
+        key.c_str(), key.size(),
         0,
         NULL,
         NULL);

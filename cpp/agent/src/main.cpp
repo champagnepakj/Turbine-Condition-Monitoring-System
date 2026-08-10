@@ -34,7 +34,8 @@ int main() {
 
     while (run) {
         std::vector<double> impulse = generateImpulseTrain(frequencies.BPFO, 29.95, 20000, 0.2, 1.0);
-        publishMessage(producer, topic, impulse);
+        std::string turbineId = std::getenv("TURBINE_ID") ? std::getenv("TURBINE_ID") : "turbine-00";
+        publishMessage(producer, topic, impulse, turbineId);
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 

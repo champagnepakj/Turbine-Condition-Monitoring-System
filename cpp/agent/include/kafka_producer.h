@@ -4,4 +4,4 @@
 
 RdKafka::Producer* initProducer(std::string brokers);
 
-bool publishMessage(RdKafka::Producer *producer, std::string topic, const std::vector<double>& signal);
+bool publishMessage(RdKafka::Producer *producer, std::string topic, const std::vector<double>& signal, const std::string& key);

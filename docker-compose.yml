@@ -14,7 +14,44 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  agent:
+  agent-01:
     build: cpp/agent
     depends_on:
       - kafka
+    environment:
+      - TURBINE_ID=turbine-01
+
+  agent-02:
+    build: cpp/agent
+    depends_on:
+      - kafka
+    environment:
+      - TURBINE_ID=turbine-02
+
+  agent-03:
+    build: cpp/agent
+    depends_on:
+      - kafka
+    environment:
+      - TURBINE_ID=turbine-03
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/var/lib/prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  grafana-data:
+  prometheus-data:
