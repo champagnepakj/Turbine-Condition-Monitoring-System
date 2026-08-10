@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     config = {
         # User-specific properties that you must set
-        'bootstrap.servers': 'localhost:9092',
+        'bootstrap.servers': 'localhost:9094',
         'group.id': 'turbine-cms-consumer-2',
         'auto.offset.reset': 'earliest'
     }

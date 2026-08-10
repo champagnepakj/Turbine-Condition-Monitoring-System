@@ -23,7 +23,7 @@ int main()
 
     std::string topic = "features";
 
-    RdKafka::Producer *producer = initProducer("localhost:9092");
+    RdKafka::Producer *producer = initProducer("kafka:9092");
     publishMessage(producer, topic, impulse);
 
     producer->flush(10000);
