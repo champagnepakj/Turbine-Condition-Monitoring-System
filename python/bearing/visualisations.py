@@ -23,10 +23,10 @@ def visualise_time_domain_envelope_plot(signal, filtered_signal, envelope, sampl
     
     plt.xlabel('Time (s)')
     plt.ylabel('Acceleration (g)')
-    plt.title('Bearing Defect Signal — Time Domain with Envelope')
+    plt.title('Bearing Defect Signal - Time Domain with Envelope')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('docs/images/time_domain_envelope.png', bbox_inches='tight')
+    plt.savefig('docs/images/time_domain_envelope_high.png', bbox_inches='tight')
     plt.show()
 
 def visualise_envelope_frequency_spectrum(frequency, magnitude, fault_type, shaft_speed):
@@ -38,16 +38,16 @@ def visualise_envelope_frequency_spectrum(frequency, magnitude, fault_type, shaf
     plt.xlim(0, 1000)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Magnitude')
-    plt.title('Envelope Spectrum — BPFO Harmonic Detection')
+    plt.title('Envelope Spectrum - BPFO Harmonic Detection')
 
     harmonic_freq = fault_type * shaft_speed
     for i in range(1, 10):
-        plt.axvline(x=harmonic_freq * i, color='red', linestyle='--', alpha=0.6,
+        plt.axvline(x=harmonic_freq * i, color='red', linestyle='--', alpha=0.3,
                     label=f'{i}× BPFO' if i <= 3 else None)
 
     plt.legend()
     plt.tight_layout()
-    plt.savefig('docs/images/envelope_spectrum.png', bbox_inches='tight')
+    plt.savefig('docs/images/envelope_spectrum_high.png', bbox_inches='tight')
     plt.show()
 
 '''
