@@ -1,6 +1,7 @@
 # https://developer.confluent.io/get-started/python/#build-consumer
 
 import numpy as np
+import os
 
 from analysis import envelope_analysis
 from detector import detection
@@ -13,10 +14,9 @@ from prometheus_client import start_http_server, Counter, Histogram
 if __name__ == '__main__':
 
     config = {
-        # User-specific properties that you must set
-        'bootstrap.servers': 'localhost:9094',
-        'group.id': 'turbine-cms-consumer-3',
-        'auto.offset.reset': 'earliest'
+    'bootstrap.servers': os.getenv('KAFKA_BROKER', 'localhost:9094'),
+    'group.id': 'turbine-cms-consumer-k8s',
+    'auto.offset.reset': 'earliest'
     }
 
     # Create Consumer instance

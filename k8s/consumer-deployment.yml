@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: turbine-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: turbine-consumer
+  template:
+    metadata:
+      labels:
+        app: turbine-consumer
+    spec:
+      containers:
+        - name: consumer
+          image: turbine-consumer:latest
+          imagePullPolicy: Never
+          env:
+            - name: KAFKA_BROKER
+              value: "kafka:9092"
