@@ -75,8 +75,48 @@ Wind turbine bearings produce characteristic vibration patterns when defects dev
 
 VIB uses envelope analysis to extract these fault signatures from noisy vibration data:
 
-![Impulse Train](docs/images/impulse_train.png)
+### Low Noise
+
+![Impulse Train](docs/images/time_domain_envelope_low.png)
 *Synthetic bearing defect signal - exponentially decaying impulses at BPFO intervals*
 
-![Envelope Spectrum](docs/images/envelope_spectrum.png)
+![Envelope Spectrum](docs/images/envelope_spectrum_low.png)
 *Envelope spectrum showing peaks at BPFO harmonics, confirming outer race fault*
+
+---
+
+### High Noise (More Realistic)
+
+![Impulse Train](docs/images/time_domain_envelope_high.png)
+*Fault signal buried below noise floor*
+
+![Envelope Spectrum](docs/images/envelope_spectrum_high.png)
+*Envelope Analysis still extracts BPFO harmonics*
+
+## Project Structure
+```
+turbine-cms/
+├── cpp/agent/          # C++ edge agent
+│   ├── src/            # Signal generator, Kafka producer, bearing geometry
+│   ├── include/        # Headers
+│   ├── CMakeLists.txt
+│   └── Dockerfile
+├── python/bearing/     # Python detection pipeline
+│   ├── analysis.py     # Envelope analysis
+│   ├── detector.py     # Fault classification
+│   ├── consumer.py     # Kafka consumer
+│   └── generate.py     # Synthetic signal generation
+├── k8s/                # Kubernetes manifests
+├── docker-compose.yml  # Edge simulation (Kafka + agents)
+└── .github/workflows/  # CI pipeline
+```
+
+## Roadmap
+
+- [ ] TimescaleDB for historical fault trending
+- [ ] KEDA autoscaling based on Kafka consumer lag
+- [ ] Fault injection — trigger faults on specific turbines mid-demo
+- [ ] LXD/LXC containers replacing Docker for turbine simulation
+- [ ] C++ agent Prometheus metrics
+- [ ] Grafana alerting to Slack/email
+- [ ] Energy production cross-referencing
