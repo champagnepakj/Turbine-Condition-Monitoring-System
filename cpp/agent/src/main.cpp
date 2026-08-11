@@ -10,6 +10,11 @@
 #include <thread>
 #include <chrono>
 
+#ifdef _WIN32
+#include <winsock.h>
+#else
+#include <unistd.h>
+#endif
 
 static volatile sig_atomic_t run = 1;
 
@@ -32,9 +37,18 @@ int main() {
     signal(SIGINT, sigterm);
     signal(SIGTERM, sigterm);
 
+    std::string turbineId;
+    if (std::getenv("TURBINE_ID")) {
+        turbineId = std::getenv("TURBINE_ID");
+    } else {
+        char hostname[256];
+        gethostname(hostname, sizeof(hostname));
+        turbineId = std::string("turbine-") + hostname;
+    }
+
     while (run) {
         std::vector<double> impulse = generateImpulseTrain(frequencies.BPFO, 29.95, 20000, 0.2, 1.0);
-        std::string turbineId = std::getenv("TURBINE_ID") ? std::getenv("TURBINE_ID") : "turbine-00";
+        // std::string turbineId = std::getenv("TURBINE_ID") ? std::getenv("TURBINE_ID") : "turbine-00";
         publishMessage(producer, topic, impulse, turbineId);
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }

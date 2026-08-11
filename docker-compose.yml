@@ -14,23 +14,9 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  agent-01:
+  agent:
     build: cpp/agent
     depends_on:
       - kafka
-    environment:
-      - TURBINE_ID=turbine-01
 
-  agent-02:
-    build: cpp/agent
-    depends_on:
-      - kafka
-    environment:
-      - TURBINE_ID=turbine-02
-
-  agent-03:
-    build: cpp/agent
-    depends_on:
-      - kafka
-    environment:
-      - TURBINE_ID=turbine-03
+  

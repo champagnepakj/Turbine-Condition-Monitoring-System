@@ -11,6 +11,12 @@ from confluent_kafka import Consumer
 
 from prometheus_client import start_http_server, Counter, Histogram
 
+import time
+import sys
+
+
+
+
 if __name__ == '__main__':
 
     config = {
@@ -51,6 +57,7 @@ if __name__ == '__main__':
                 # Extract the (optional) key and value, and print.
                 with processing_time.time():
                     signal = np.frombuffer(msg.value())
+                    print(f"Message size: {sys.getsizeof(msg.value())} bytes")
                     freqs_axis, mags, filt, env = envelope_analysis(signal, 20000)
                     half = len(freqs_axis) // 2
                     x = detection(freqs_axis[:half], mags[:half], freqs.BPFO, 29.95, 10)
