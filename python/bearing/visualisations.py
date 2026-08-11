@@ -1,7 +1,56 @@
 import matplotlib.pyplot as plt
 #from main import plain_noise, test_filt, test_env, test_freq, test_mag
+import numpy as np
 
+plt.style.use('seaborn-v0_8-darkgrid')
+plt.rcParams.update({
+    'figure.figsize': (12, 4),
+    'font.size': 12,
+    'axes.titlesize': 14,
+    'axes.labelsize': 12,
+    'figure.dpi': 150
+})
 
+def visualise_time_domain_envelope_plot(signal, filtered_signal, envelope, sample_rate):
+    plt.style.use('seaborn-v0_8-darkgrid')
+    plt.figure(figsize=(12, 4), dpi=150)
+    
+    time_axis = np.arange(1000) / sample_rate
+    
+    plt.plot(time_axis, signal[:1000], alpha=0.5, label='Raw signal')
+    plt.plot(time_axis, filtered_signal[:1000], alpha=0.7, label='Bandpass filtered')
+    plt.plot(time_axis, envelope[:1000], color='red', linewidth=2, label='Envelope')
+    
+    plt.xlabel('Time (s)')
+    plt.ylabel('Acceleration (g)')
+    plt.title('Bearing Defect Signal — Time Domain with Envelope')
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig('docs/images/time_domain_envelope.png', bbox_inches='tight')
+    plt.show()
+
+def visualise_envelope_frequency_spectrum(frequency, magnitude, fault_type, shaft_speed):
+    plt.style.use('seaborn-v0_8-darkgrid')
+    plt.figure(figsize=(12, 4), dpi=150)
+    
+    half = len(frequency) // 2
+    plt.plot(frequency[:half], magnitude[:half], linewidth=1)
+    plt.xlim(0, 1000)
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Magnitude')
+    plt.title('Envelope Spectrum — BPFO Harmonic Detection')
+
+    harmonic_freq = fault_type * shaft_speed
+    for i in range(1, 10):
+        plt.axvline(x=harmonic_freq * i, color='red', linestyle='--', alpha=0.6,
+                    label=f'{i}× BPFO' if i <= 3 else None)
+
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig('docs/images/envelope_spectrum.png', bbox_inches='tight')
+    plt.show()
+
+'''
 def visualise_time_domain_envelope_plot(signal, filtered_signal, envelope):
     plt.figure()
     plt.plot(signal[:1000])
@@ -9,6 +58,8 @@ def visualise_time_domain_envelope_plot(signal, filtered_signal, envelope):
     plt.plot(envelope[:1000], color='red')
     plt.xlabel('Samples')
     plt.ylabel('Acceleration')
+    plt.tight_layout()
+    plt.savefig('docs/images/impulse_train.png', bbox_inches='tight')
     plt.show()
 
 def visualise_envelope_frequency_spectrum(frequency, magnitude, fault_type):
@@ -24,6 +75,8 @@ def visualise_envelope_frequency_spectrum(frequency, magnitude, fault_type):
         plt.axvline(x=fault_type * 29.95 * i, color='black', linestyle='--')
 
     plt.show()
+
+'''
 
 
 '''
