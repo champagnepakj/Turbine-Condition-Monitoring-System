@@ -16,6 +16,8 @@ spec:
         - name: consumer
           image: turbine-consumer:latest
           imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
           env:
             - name: KAFKA_BROKER
               value: "kafka:9092"
