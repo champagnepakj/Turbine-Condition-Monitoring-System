@@ -61,6 +61,7 @@ if __name__ == '__main__':
                     freqs_axis, mags, filt, env = envelope_analysis(signal, 20000)
                     half = len(freqs_axis) // 2
                     x = detection(freqs_axis[:half], mags[:half], freqs.BPFO, 29.95, 10)
+
                     turbine_id = msg.key().decode('utf-8')
                     messages_consumed.labels(turbine_id=turbine_id).inc()
                     faults_detected.labels(turbine_id=turbine_id).inc(len(x))
