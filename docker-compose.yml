@@ -19,4 +19,15 @@ services:
     depends_on:
       - kafka
 
-  
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: vib
+      POSTGRES_PASSWORD: vib
+      POSTGRES_DB: vib
+    volumes:
+      - timescale-data:/var/lib/postgresql/data
+volumes:
+  timescale-data:

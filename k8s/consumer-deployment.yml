@@ -23,3 +23,5 @@ spec:
               value: "kafka:9092"
             - name: PYTHONBUFFERED
               value: "1"
+            - name: DB_HOST
+              value: "timescaledb"

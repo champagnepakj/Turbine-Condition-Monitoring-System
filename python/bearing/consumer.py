@@ -13,6 +13,8 @@ from prometheus_client import start_http_server, Counter, Histogram
 
 import time
 import sys
+import psycopg2
+from datetime import datetime
 
 
 
@@ -40,6 +42,34 @@ if __name__ == '__main__':
     #faults_detected = Counter('faults_detected_total', 'Total faults detected')
     processing_time = Histogram('message_processing_seconds', 'Time to process each message')
 
+    conn = psycopg2.connect(
+        host=os.getenv('DB_HOST', 'localhost'),
+        port=5432,
+        dbname="vib",
+        user="vib",
+        password="vib"
+    )
+    conn.autocommit = True
+    cur = conn.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS detections (
+            time        TIMESTAMPTZ NOT NULL,
+            turbine_id  TEXT NOT NULL,
+            fault_type  TEXT,
+            severity    DOUBLE PRECISION,
+            confidence  DOUBLE PRECISION,
+            harmonics   INTEGER,
+            shaft_speed DOUBLE PRECISION,
+            latitude    DOUBLE PRECISION,
+            longitude   DOUBLE PRECISION
+        );
+    """)
+
+    cur.execute("""
+        SELECT create_hypertable('detections', 'time', if_not_exists => TRUE);
+    """)
+
     # Poll for new messages from Kafka and print them.
     try:
         while True:
@@ -63,6 +93,20 @@ if __name__ == '__main__':
                     x = detection(freqs_axis[:half], mags[:half], freqs.BPFO, 29.95, 10)
 
                     turbine_id = msg.key().decode('utf-8')
+
+                    if x: 
+                        cur.execute("""
+                            INSERT INTO detections (time, turbine_id, fault_type, severity, harmonics, shaft_speed)
+                            VALUES (%s, %s, %s, %s, %s, %s)
+                        """, (
+                            datetime.utcnow(),
+                            turbine_id,
+                            'BPFO',
+                            float(x[0]['magnitude']),
+                            len(x),
+                            29.95
+                        ))
+                    
                     messages_consumed.labels(turbine_id=turbine_id).inc()
                     faults_detected.labels(turbine_id=turbine_id).inc(len(x))
                     #messages_consumed.inc()
@@ -72,3 +116,4 @@ if __name__ == '__main__':
     finally:
         # Leave group and commit final offsets
         consumer.close()
+        conn.close()
