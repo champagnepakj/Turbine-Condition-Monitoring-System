@@ -43,11 +43,11 @@ if __name__ == '__main__':
     processing_time = Histogram('message_processing_seconds', 'Time to process each message')
 
     conn = psycopg2.connect(
-        host=os.getenv('DB_HOST', 'localhost'),
-        port=5432,
-        dbname="vib",
-        user="vib",
-        password="vib"
+        host=os.getenv('DB_HOST'),
+        port=int(os.getenv('DB_PORT', '5432')),
+        dbname=os.getenv('DB_NAME'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD')
     )
     conn.autocommit = True
     cur = conn.cursor()
