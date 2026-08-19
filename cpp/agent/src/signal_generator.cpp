@@ -36,17 +36,16 @@ std::vector<double> generateImpulseTrain(double faultFreq, double shaftSpeed, in
             signal[i + j] = impulse[j];
         }
     }
-
-    /*
-    std::mt19937 gen(std::random_device{}());
-    std::normal_distribution<double> dist(0.0, noiseLevel);
-    
-    for (int i = 0; i < signal.size(); i++)
-    {
-        signal[i] += dist(gen);
-    }
-    */
     
     return signal;
 }
 
+std::vector<double> generateNoise(int sampleRate, double noiseLevel, double durationSeconds) {
+    std::vector<double> signal(sampleRate * durationSeconds);
+    std::mt19937 gen(std::random_device{}());
+    std::normal_distribution<double> dist(0.0, noiseLevel);
+    for (int i = 0; i < signal.size(); i++) {
+        signal[i] += dist(gen);
+    }
+    return signal;
+}

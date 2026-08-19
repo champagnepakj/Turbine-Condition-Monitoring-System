@@ -4,6 +4,7 @@
 #include "bearing.geometry.h"
 #include <librdkafka/rdkafkacpp.h>
 #include "kafka_producer.h"
+#include "kafka_consumer.h"
 
 #include <csignal>
 
@@ -16,9 +17,13 @@
 #include <unistd.h>
 #endif
 
-static volatile sig_atomic_t run = 1;
+volatile sig_atomic_t run = 1;
 
 static void sigterm(int sig) { run = 0; }
+
+std::atomic<int> current_fault_state{0};
+
+
 
 int main() {
     Bearing cwruBearing{"CWRU 6205", 9, 7.94, 39.04, 0.0};
@@ -32,8 +37,6 @@ int main() {
 
     std::string topic = "features";
 
-    RdKafka::Producer *producer = initProducer("kafka:9092");
-
     signal(SIGINT, sigterm);
     signal(SIGTERM, sigterm);
 
@@ -46,13 +49,37 @@ int main() {
         turbineId = std::string("turbine-") + hostname;
     }
 
+    RdKafka::Producer *producer = initProducer("kafka:9092");
+    RdKafka::KafkaConsumer *consumer = initConsumer("kafka:9092", turbineId);
+
+    // std::ref forcing reference passing
+    std::thread commandThread(commandConsumerLoop, consumer, turbineId, std::ref(current_fault_state));
+
     while (run) {
-        std::vector<double> impulse = generateImpulseTrain(frequencies.BPFO, 29.95, 20000, 0.2, 1.0);
-        // std::string turbineId = std::getenv("TURBINE_ID") ? std::getenv("TURBINE_ID") : "turbine-00";
+        int fault = current_fault_state.load();
+        
+        std::vector<double> impulse;
+        if (fault == BPFO) {
+            impulse = generateImpulseTrain(frequencies.BPFO, 29.95, 20000, 0.2, 1.0);
+        } else if (fault == BPFI) {
+            impulse = generateImpulseTrain(frequencies.BPFI, 29.95, 20000, 0.2, 1.0);
+        } else if (fault == BSF) {
+            impulse = generateImpulseTrain(frequencies.BSF, 29.95, 20000, 0.2, 1.0);
+        } else if (fault == FTF) {
+            impulse = generateImpulseTrain(frequencies.FTF, 29.95, 20000, 0.2, 1.0);
+        } else {
+            // NONE — pure noise only, no impulse train
+            impulse = generateNoise(20000, 0.2, 1.0);
+        }
+        
         publishMessage(producer, topic, impulse, turbineId);
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
+    // Cleanup
+    commandThread.join();
+    consumer->close();
+    delete consumer;
     producer->flush(10000);
     delete producer;
 }

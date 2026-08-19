@@ -10,7 +10,7 @@ if(NOT RdKafka_FOUND)
     pkg_check_modules(RDKAFKA REQUIRED rdkafka++)
 endif()
 
-add_executable(agent src/main.cpp src/signal_generator.cpp src/bearing_geometry.cpp src/kafka_producer.cpp)
+add_executable(agent src/main.cpp src/signal_generator.cpp src/bearing_geometry.cpp src/kafka_producer.cpp src/kafka_consumer.cpp)
 target_include_directories(agent PRIVATE include)
 
 if(RdKafka_FOUND)
