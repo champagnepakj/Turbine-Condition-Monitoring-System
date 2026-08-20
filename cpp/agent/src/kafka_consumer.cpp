@@ -20,7 +20,7 @@ RdKafka::KafkaConsumer* initConsumer(std::string brokers, std::string group_id) 
         exit(1);
     }
     // set auto.offset.reset to "latest" (dont replay old commands)
-    if (conf->set("auto.offset.reset", "latest", errstr) != RdKafka::Conf::CONF_OK) {
+    if (conf->set("auto.offset.reset", "earliest", errstr) != RdKafka::Conf::CONF_OK) {
         std::cerr << errstr << std::endl;
         exit(1);
     }
@@ -31,13 +31,23 @@ RdKafka::KafkaConsumer* initConsumer(std::string brokers, std::string group_id) 
         exit(1);
     }
     // subscribe to topic
-    //static std::vector<std::string> topics = {"commands"}; // caused lxd double free error
+    static std::vector<std::string> topics = {"commands"}; // caused lxd double free error
     //consumer->subscribe(topics);
     // return consumer
+    RdKafka::ErrorCode err = consumer->subscribe(topics);
+    if (err) {
+        std::cerr << "Subscribe failed: " << RdKafka::err2str(err) << std::endl;
+    }
+
+    /*
     std::vector<RdKafka::TopicPartition*> partitions;
-    partitions.push_back(RdKafka::TopicPartition::create("commands", 0));
+    //partitions.push_back(RdKafka::TopicPartition::create("commands", 0));
+    RdKafka::TopicPartition* p = RdKafka::TopicPartition::create("commands", 0);
+    p->set_offset(RdKafka::Topic::OFFSET_END);  // or OFFSET_BEGINNING to read old commands
+    partitions.push_back(p);
     consumer->assign(partitions);
     RdKafka::TopicPartition::destroy(partitions);
+    */
     
     return consumer;
 }
@@ -56,9 +66,14 @@ std::string extractField(const std::string& json, const std::string& field) {
 }
 
 void commandConsumerLoop(RdKafka::KafkaConsumer* consumer, const std::string& turbineId, std::atomic<int>& currentFault) {
-    
+    std::cerr << "Consumer loop starting for " << turbineId << std::endl;
     while (run) {
+
+        std::cerr << "Polling..." << std::endl;
         RdKafka::Message *msg = consumer->consume(1000);
+        std::cerr << "Poll returned err=" << msg->err() << std::endl;
+
+
 
         if (msg->err() == RdKafka::ERR__TIMED_OUT) {
             delete msg;

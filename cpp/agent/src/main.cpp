@@ -46,7 +46,8 @@ int main() {
     } else {
         char hostname[256];
         gethostname(hostname, sizeof(hostname));
-        turbineId = std::string("turbine-") + hostname;
+        //turbineId = std::string("turbine-") + hostname;
+        turbineId = std::string(hostname);
     }
 
     //RdKafka::Producer *producer = initProducer("kafka:9092");
@@ -54,10 +55,10 @@ int main() {
 
     std::string broker = std::getenv("KAFKA_BROKER") ? std::getenv("KAFKA_BROKER") : "localhost:9094";
     RdKafka::Producer *producer = initProducer(broker);
-    //RdKafka::KafkaConsumer *consumer = initConsumer(broker, turbineId);
+    RdKafka::KafkaConsumer *consumer = initConsumer(broker, turbineId + "-cmd");
 
     // std::ref forcing reference passing
-    //std::thread commandThread(commandConsumerLoop, consumer, turbineId, std::ref(current_fault_state));
+    std::thread commandThread(commandConsumerLoop, consumer, turbineId, std::ref(current_fault_state));
 
     while (run) {
 
@@ -90,9 +91,9 @@ int main() {
     }
 
     // Cleanup
-    //commandThread.join();
-    //consumer->close();
-    //delete consumer;
+    commandThread.join();
+    consumer->close();
+    delete consumer;
     producer->flush(10000);
     delete producer;
 }
