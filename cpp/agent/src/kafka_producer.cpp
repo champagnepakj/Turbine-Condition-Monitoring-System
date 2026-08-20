@@ -45,6 +45,8 @@ RdKafka::Producer* initProducer(std::string brokers) {
         exit(1);
     }
 
+    conf->set("massage.timeout.ms", "5000", errstr);
+
     // create producer
     RdKafka::Producer *producer = RdKafka::Producer::create(conf, errstr);
     if (!producer) {
@@ -59,6 +61,8 @@ RdKafka::Producer* initProducer(std::string brokers) {
 
 
 bool publishMessage(RdKafka::Producer *producer, std::string topic, const std::vector<double>& signal, const std::string& key) {
+
+    std::cout << "publishMessage: entering produce" << std::endl;
     
     RdKafka::ErrorCode err = producer->produce(
         topic,
@@ -70,6 +74,8 @@ bool publishMessage(RdKafka::Producer *producer, std::string topic, const std::v
         NULL,
         NULL);
 
+        std::cout << "publishMessage: produce returned " << err << std::endl;
+
     if (err != RdKafka::ERR_NO_ERROR) {
         std::cerr << "% Failed to produce to topic " << topic << ": " << RdKafka::err2str(err) << std::endl;
         if (err == RdKafka::ERR__QUEUE_FULL) {
@@ -78,7 +84,10 @@ bool publishMessage(RdKafka::Producer *producer, std::string topic, const std::v
         return false;
     }
 
+    std::cout << "publishMessage: calling poll" << std::endl;
     producer->poll(0);
+    std::cout << "publishMessage: done" << std::endl;
+
     return true;
 }
 

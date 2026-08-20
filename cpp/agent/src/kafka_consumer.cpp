@@ -31,10 +31,14 @@ RdKafka::KafkaConsumer* initConsumer(std::string brokers, std::string group_id) 
         exit(1);
     }
     // subscribe to topic
-    std::vector<std::string> topics = {"commands"};
-    consumer->subscribe(topics);
+    //static std::vector<std::string> topics = {"commands"}; // caused lxd double free error
+    //consumer->subscribe(topics);
     // return consumer
-    delete conf;
+    std::vector<RdKafka::TopicPartition*> partitions;
+    partitions.push_back(RdKafka::TopicPartition::create("commands", 0));
+    consumer->assign(partitions);
+    RdKafka::TopicPartition::destroy(partitions);
+    
     return consumer;
 }
 
