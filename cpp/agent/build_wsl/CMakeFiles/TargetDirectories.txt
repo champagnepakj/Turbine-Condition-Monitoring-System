@@ -1,3 +1,0 @@
-/mnt/z/CMSProject/turbine-cms/cpp/agent/build_wsl/CMakeFiles/agent.dir
-/mnt/z/CMSProject/turbine-cms/cpp/agent/build_wsl/CMakeFiles/edit_cache.dir
-/mnt/z/CMSProject/turbine-cms/cpp/agent/build_wsl/CMakeFiles/rebuild_cache.dir

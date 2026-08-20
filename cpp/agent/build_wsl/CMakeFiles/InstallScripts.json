@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/mnt/z/CMSProject/turbine-cms/cpp/agent/build_wsl/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
